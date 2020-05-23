@@ -1,0 +1,48 @@
+---
+title: "Beach Volleyball"
+author: "Paul O'Mahony"
+date: "5/22/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Beach Volleyball
+
+This is the beach volleyball dataset. First load necessary packages.
+```{r}
+library(scales)
+```
+
+## First Look
+
+```{r}
+vb_matches %>%
+  count(circuit, tournament, date, sort = TRUE)
+
+vb_matches %>%
+  count(year)
+```
+
+```{r}
+vb_long <- vb_matches %>%
+  rename(w_p1_name = w_player1, w_p2_name = w_player2,
+         l_p1_name = l_player1, l_p2_name = l_player2,
+         w_team_rank = w_rank, l_team_rank = l_rank) %>%
+  mutate_at(vars(starts_with("w_"), starts_with("l_")), as.character) %>%
+  pivot_longer(cols = c(starts_with("w_"), starts_with("l_"))) %>%
+  separate(name, c("winner_loser", "player", "name"), sep = "_",
+           extra = "merge",
+           fill = "right")  
+
+vb_long %>%
+  view()
+
+
+vb_long %>%
+  pivot_wider(names_from = name, values_from = value)
+```
